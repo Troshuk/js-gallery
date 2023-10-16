@@ -26,16 +26,19 @@ gallery.addEventListener("click", (e) => {
     return;
   }
 
-  basicLightbox
-    .create(`<img src="${e.target.dataset.source}" width="800" height="600">`, {
-      onShow: closeOnEscape,
-    })
-    .show();
-});
-
-function closeOnEscape(instance) {
-  window.addEventListener(
-    "keydown",
-    ({ code }) => code === "Escape" && instance.close()
+  const imageModal = basicLightbox.create(
+    `<img src="${e.target.dataset.source}" width="800" height="600">`,
+    {
+      onShow: () => window.addEventListener("keydown", closeOnEscape),
+      onClose: () => window.removeEventListener("keydown", closeOnEscape),
+    }
   );
-}
+
+  imageModal.show();
+
+  function closeOnEscape({ code }) {
+    if (code === "Escape") {
+      imageModal.close();
+    }
+  }
+});
